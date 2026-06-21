@@ -1,0 +1,19 @@
+using Axon.Core.Enums;
+using Axon.Core.Models;
+
+namespace Axon.Core.Interfaces;
+
+public interface IDeliveryRepository
+{
+    Task<List<Delivery>> GetAllByUserAsync(string userId, DeliveryStatus? status);
+    Task<Delivery?> GetByIdAsync(string id, string userId);
+    Task CreateAsync(Delivery delivery);
+    Task UpdateAsync(string id, string? repoUrl, WorkspaceType? workspaceType, string? workspacePath);
+    Task UpdateStatusAsync(string id, DeliveryStatus status, string? currentNodeId, string? workspacePath, string? ticketTitle, DateTime? startedAt = null, string? branch = null);
+    Task AppendStepAsync(string id, DeliveryStep step);
+    Task UpdateStepAsync(string id, string nodeId, DeliveryStep updatedStep);
+    Task UpdateGateStatusAsync(string id, string nodeId, bool approved, string? reason);
+    // Atomically-incrementing, globally unique job number (1, 2, 3...) — used in
+    // branch naming (axon/job-{n}-{ticketId}) so jobs are easy to reference/sort.
+    Task<int> GetNextJobNumberAsync();
+}

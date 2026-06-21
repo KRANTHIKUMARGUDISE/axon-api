@@ -1,0 +1,12 @@
+D:\AXON\axon-api\Axon.Core\bin\Debug\net10.0\Axon.Core.deps.json
+D:\AXON\axon-api\Axon.Core\bin\Debug\net10.0\Axon.Core.dll
+D:\AXON\axon-api\Axon.Core\bin\Debug\net10.0\Axon.Core.pdb
+D:\AXON\axon-api\Axon.Core\obj\Debug\net10.0\Axon.Core.GeneratedMSBuildEditorConfig.editorconfig
+D:\AXON\axon-api\Axon.Core\obj\Debug\net10.0\Axon.Core.AssemblyInfoInputs.cache
+D:\AXON\axon-api\Axon.Core\obj\Debug\net10.0\Axon.Core.AssemblyInfo.cs
+D:\AXON\axon-api\Axon.Core\obj\Debug\net10.0\Axon.Core.csproj.CoreCompileInputs.cache
+D:\AXON\axon-api\Axon.Core\obj\Debug\net10.0\Axon.Core.dll
+D:\AXON\axon-api\Axon.Core\obj\Debug\net10.0\refint\Axon.Core.dll
+D:\AXON\axon-api\Axon.Core\obj\Debug\net10.0\Axon.Core.pdb
+D:\AXON\axon-api\Axon.Core\obj\Debug\net10.0\ref\Axon.Core.dll
+D:\AXON\axon-api\Axon.Core\obj\Debug\net10.0\Axon.Core.csproj.AssemblyReference.cache

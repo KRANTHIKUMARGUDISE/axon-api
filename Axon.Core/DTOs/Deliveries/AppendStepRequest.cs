@@ -1,0 +1,17 @@
+using Axon.Core.Enums;
+using Axon.Core.Models;
+using MongoDB.Bson;
+
+namespace Axon.Core.DTOs.Deliveries;
+
+public class AppendStepRequest
+{
+    public string NodeId { get; set; } = default!;
+    public string BlockId { get; set; } = default!;
+    public string BlockName { get; set; } = default!;
+    public StepStatus Status { get; set; }
+    public BsonDocument? ContextSnapshot { get; set; }
+    public bool IsContextTruncated { get; set; }
+    public string? ContextFileRef { get; set; }
+    public AgentOutput? Output { get; set; }
+}

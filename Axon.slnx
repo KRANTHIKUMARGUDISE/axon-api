@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="Axon.Core/Axon.Core.csproj" />
+  <Project Path="Axon.Infrastructure/Axon.Infrastructure.csproj" />
+  <Project Path="Axon.API/Axon.API.csproj" />
+</Solution>
