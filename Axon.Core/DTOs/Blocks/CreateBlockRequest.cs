@@ -13,6 +13,7 @@ public class CreateBlockRequest
     public ArtifactFormat ArtifactFormat { get; set; }
     public List<string> ContextRequirements { get; set; } = [];
     public List<string> OutputSchema { get; set; } = [];
+    public Dictionary<string, string>? OutputMapping { get; set; }
     public List<string> Tags { get; set; } = [];
     public List<CachedFileRequest>? CachedFiles { get; set; }
     public string? EntryPointPath { get; set; }

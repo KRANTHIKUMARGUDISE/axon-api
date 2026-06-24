@@ -12,6 +12,8 @@ public class BlockSummaryDto
     public string ArtifactName { get; set; } = default!;
     public AgentRuntime AgentRuntime { get; set; }
     public ArtifactFormat ArtifactFormat { get; set; }
+    public List<string> ContextRequirements { get; set; } = [];
+    public List<string> OutputSchema { get; set; } = [];
     public List<string> Tags { get; set; } = [];
     public int RunCount { get; set; }
     public bool IsActive { get; set; }

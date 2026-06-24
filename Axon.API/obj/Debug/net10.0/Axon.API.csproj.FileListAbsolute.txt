@@ -53,4 +53,5 @@ D:\AXON\axon-api\Axon.API\obj\Debug\net10.0\Axon.API.genruntimeconfig.cache
 D:\AXON\axon-api\Axon.API\obj\Debug\net10.0\ref\Axon.API.dll
 D:\AXON\axon-api\Axon.API\bin\Debug\net10.0\BCrypt-Net-Next.dll
 D:\AXON\axon-api\Axon.API\bin\Debug\net10.0\Microsoft.Bcl.Cryptography.dll
+D:\AXON\axon-api\Axon.API\obj\Debug\net10.0\Axon.API.sourcelink.json
 D:\AXON\axon-api\Axon.API\obj\Debug\net10.0\staticwebassets.upToDateCheck.txt

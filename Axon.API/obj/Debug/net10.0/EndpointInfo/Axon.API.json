@@ -540,6 +540,66 @@
         }
       }
     },
+    "/api/deliveries/{deliveryId}/steps/{stepId}/context": {
+      "get": {
+        "tags": [
+          "Deliveries"
+        ],
+        "parameters": [
+          {
+            "name": "deliveryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "stepId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/deliveries/{deliveryId}/steps/{stepId}/output": {
+      "get": {
+        "tags": [
+          "Deliveries"
+        ],
+        "parameters": [
+          {
+            "name": "deliveryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "stepId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/health": {
       "get": {
         "tags": [
@@ -791,7 +851,8 @@
           },
           "confidence": {
             "type": "number",
-            "format": "float"
+            "format": "float",
+            "nullable": true
           },
           "summary": {
             "type": "string",
@@ -809,6 +870,34 @@
             "nullable": true
           },
           "errorMessage": {
+            "type": "string",
+            "nullable": true
+          },
+          "errorCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "recoverable": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "approvedBy": {
+            "type": "string",
+            "nullable": true
+          },
+          "approvedAt": {
+            "type": "string",
+            "nullable": true
+          },
+          "rejectedBy": {
+            "type": "string",
+            "nullable": true
+          },
+          "rejectedAt": {
+            "type": "string",
+            "nullable": true
+          },
+          "reviewComment": {
             "type": "string",
             "nullable": true
           },
@@ -860,6 +949,20 @@
           },
           "contextFileRef": {
             "type": "string",
+            "nullable": true
+          },
+          "contextAvailability": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "outputAvailability": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
             "nullable": true
           },
           "output": {
@@ -4232,6 +4335,13 @@
             },
             "nullable": true
           },
+          "outputMapping": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "nullable": true
+          },
           "tags": {
             "type": "array",
             "items": {
@@ -4274,6 +4384,9 @@
           },
           "workspaceType": {
             "$ref": "#/components/schemas/WorkspaceType"
+          },
+          "storeFullContext": {
+            "type": "boolean"
           },
           "inputs": {
             "type": "array",
@@ -4570,7 +4683,7 @@
           "Completed",
           "Failed",
           "Paused",
-          "AwaitingHuman"
+          "AwaitingApproval"
         ],
         "type": "string"
       },
@@ -4618,6 +4731,13 @@
           "outputSchema": {
             "type": "array",
             "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "outputMapping": {
+            "type": "object",
+            "additionalProperties": {
               "type": "string"
             },
             "nullable": true

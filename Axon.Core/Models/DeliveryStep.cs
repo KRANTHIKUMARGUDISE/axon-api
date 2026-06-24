@@ -12,6 +12,8 @@ public class DeliveryStep
     public BsonDocument? ContextSnapshot { get; set; }
     public bool IsContextTruncated { get; set; }
     public string? ContextFileRef { get; set; }
+    public Dictionary<string, string>? ContextAvailability { get; set; }
+    public Dictionary<string, string>? OutputAvailability { get; set; }
     public AgentOutput? Output { get; set; }
     public DateTime? StartedAt { get; set; }
     public DateTime? CompletedAt { get; set; }

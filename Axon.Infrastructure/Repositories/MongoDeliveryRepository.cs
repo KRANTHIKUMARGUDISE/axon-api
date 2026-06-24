@@ -97,7 +97,7 @@ public class MongoDeliveryRepository : IDeliveryRepository
     private static FilterDefinition<T> ById<T>(string id) =>
         Builders<T>.Filter.Eq("_id", id);
 
-    public async Task UpdateGateStatusAsync(string id, string nodeId, bool approved, string? reason)
+    public async Task UpdateGateStatusAsync(string id, string nodeId, bool approved, string? reason, string approvedByUserId, string? approvedByName)
     {
         var delivery = await _context.Deliveries.Find(ById<Delivery>(id)).FirstOrDefaultAsync();
         if (delivery == null) return;
@@ -105,13 +105,33 @@ public class MongoDeliveryRepository : IDeliveryRepository
         var idx = delivery.Steps.FindIndex(s => s.NodeId == nodeId);
         if (idx >= 0 && delivery.Steps[idx].Output != null)
         {
-            delivery.Steps[idx].Output!.HumanGateReason = reason;
-            delivery.Steps[idx].Status = approved ? StepStatus.Completed : StepStatus.Failed;
-            await _context.Deliveries.UpdateOneAsync(
-                ById<Delivery>(id),
-                Builders<Delivery>.Update
-                    .Set(d => d.Steps, delivery.Steps)
-                    .Set(d => d.UpdatedAt, DateTime.UtcNow));
+            var output = delivery.Steps[idx].Output!;
+            var resolvedAt = DateTime.UtcNow;
+            if (approved)
+            {
+                output.ApprovedBy = approvedByName ?? approvedByUserId;
+                output.ApprovedAt = resolvedAt.ToString("o");
+                if (!string.IsNullOrWhiteSpace(reason)) output.ReviewComment = reason;
+                delivery.Steps[idx].Status = StepStatus.Completed;
+            }
+            else
+            {
+                output.ErrorMessage = reason;
+                output.RejectedBy = approvedByName ?? approvedByUserId;
+                output.RejectedAt = resolvedAt.ToString("o");
+                delivery.Steps[idx].Status = StepStatus.Failed;
+            }
+            // This gate step was left CompletedAt=null at append time (AwaitingApproval
+            // isn't finished yet) — now that it's resolved, it actually is.
+            delivery.Steps[idx].CompletedAt = resolvedAt;
+
+            var update = Builders<Delivery>.Update
+                .Set(d => d.Steps, delivery.Steps)
+                .Set(d => d.UpdatedAt, DateTime.UtcNow);
+            if (!approved)
+                update = update.Set(d => d.Status, DeliveryStatus.Failed);
+
+            await _context.Deliveries.UpdateOneAsync(ById<Delivery>(id), update);
         }
     }
 

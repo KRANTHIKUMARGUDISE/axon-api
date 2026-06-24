@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Axon.Core")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1d9884cf9abfa708096ef680404eaa080e563534")]
 [assembly: System.Reflection.AssemblyProductAttribute("Axon.Core")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Axon.Core")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

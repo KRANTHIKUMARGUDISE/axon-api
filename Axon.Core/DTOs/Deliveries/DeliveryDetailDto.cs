@@ -13,11 +13,12 @@ public class DeliveryDetailDto
     public PipelineDefinition PipelineSnapshot { get; set; } = default!;
     public DeliveryStatus Status { get; set; }
     public WorkspaceType WorkspaceType { get; set; }
+    public bool StoreFullContext { get; set; }
     public string RepoUrl { get; set; } = default!;
     public string? CurrentNodeId { get; set; }
     public string? WorkspacePath { get; set; }
     public string? Branch { get; set; }
-    public List<DeliveryStep> Steps { get; set; } = [];
+    public List<DeliveryStepSummaryDto> Steps { get; set; } = [];
     public BsonDocument? Inputs { get; set; }
     public string? RetriedFromDeliveryId { get; set; }
     public int AttemptNumber { get; set; } = 1;

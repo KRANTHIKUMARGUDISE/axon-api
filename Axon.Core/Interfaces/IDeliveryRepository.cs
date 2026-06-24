@@ -12,7 +12,7 @@ public interface IDeliveryRepository
     Task UpdateStatusAsync(string id, DeliveryStatus status, string? currentNodeId, string? workspacePath, string? ticketTitle, DateTime? startedAt = null, string? branch = null);
     Task AppendStepAsync(string id, DeliveryStep step);
     Task UpdateStepAsync(string id, string nodeId, DeliveryStep updatedStep);
-    Task UpdateGateStatusAsync(string id, string nodeId, bool approved, string? reason);
+    Task UpdateGateStatusAsync(string id, string nodeId, bool approved, string? reason, string approvedByUserId, string? approvedByName);
     // Atomically-incrementing, globally unique job number (1, 2, 3...) — used in
     // branch naming (axon/job-{n}-{ticketId}) so jobs are easy to reference/sort.
     Task<int> GetNextJobNumberAsync();

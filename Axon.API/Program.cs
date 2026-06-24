@@ -126,6 +126,7 @@ using (var scope = app.Services.CreateScope())
 {
     var mongo = scope.ServiceProvider.GetRequiredService<MongoContext>();
     await BlockSchemaMigration.ExecuteAsync(mongo);
+    await HumanGateSeedMigration.ExecuteAsync(mongo);
 }
 
 // MongoDB indexes
@@ -166,3 +167,4 @@ app.MapControllers();
 app.MapHub<DeliveryHub>("/hubs/delivery");
 
 app.Run();
+

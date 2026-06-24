@@ -70,6 +70,7 @@ public class DeliveriesController : ControllerBase
             PipelineSnapshot = pipeline,
             RepoUrl = request.RepoUrl,
             WorkspaceType = request.WorkspaceType,
+            StoreFullContext = request.StoreFullContext,
             Inputs = request.Inputs,
             RetriedFromDeliveryId = request.RetriedFromDeliveryId,
             AttemptNumber = attemptNumber,
@@ -126,6 +127,12 @@ public class DeliveriesController : ControllerBase
         var delivery = await _deliveries.GetByIdAsync(id, UserId());
         if (delivery == null) return NotFound();
 
+        // Desktop posts a step's full result in one shot after the agent has already
+        // run (no separate start-then-finish signal reaches the backend), so
+        // StartedAt/CompletedAt are both stamped at append time — except for a gate
+        // step (AwaitingApproval), which isn't actually finished yet; that one gets
+        // CompletedAt later, in UpdateGateStatusAsync, when it's approved/rejected.
+        var now = DateTime.UtcNow;
         var step = new DeliveryStep
         {
             NodeId = request.NodeId,
@@ -135,8 +142,11 @@ public class DeliveriesController : ControllerBase
             ContextSnapshot = request.ContextSnapshot,
             IsContextTruncated = request.IsContextTruncated,
             ContextFileRef = request.ContextFileRef,
+            ContextAvailability = request.ContextAvailability,
+            OutputAvailability = request.OutputAvailability,
             Output = request.Output,
-            StartedAt = DateTime.UtcNow
+            StartedAt = now,
+            CompletedAt = request.Status == StepStatus.AwaitingApproval ? null : now
         };
 
         await _deliveries.AppendStepAsync(id, step);
@@ -150,7 +160,9 @@ public class DeliveriesController : ControllerBase
         if (delivery == null) return NotFound();
         if (delivery.CurrentNodeId == null) return BadRequest(new { error = "No active gate node" });
 
-        await _deliveries.UpdateGateStatusAsync(id, delivery.CurrentNodeId, true, request.Reason);
+        var userId = UserId();
+        var user = await _users.GetByIdAsync(userId);
+        await _deliveries.UpdateGateStatusAsync(id, delivery.CurrentNodeId, true, request.Reason, userId, user?.DisplayName);
         await _hub.SendGateApprovedAsync(id, delivery.CurrentNodeId);
         return NoContent();
     }
@@ -158,11 +170,16 @@ public class DeliveriesController : ControllerBase
     [HttpPost("{id}/gate/reject")]
     public async Task<IActionResult> GateReject(string id, [FromBody] GateDecisionRequest request)
     {
+        if (string.IsNullOrWhiteSpace(request.Reason))
+            return BadRequest(new { error = "A comment is required to reject" });
+
         var delivery = await _deliveries.GetByIdAsync(id, UserId());
         if (delivery == null) return NotFound();
         if (delivery.CurrentNodeId == null) return BadRequest(new { error = "No active gate node" });
 
-        await _deliveries.UpdateGateStatusAsync(id, delivery.CurrentNodeId, false, request.Reason);
+        var userId = UserId();
+        var user = await _users.GetByIdAsync(userId);
+        await _deliveries.UpdateGateStatusAsync(id, delivery.CurrentNodeId, false, request.Reason, userId, user?.DisplayName);
         await _hub.SendGateRejectedAsync(id, delivery.CurrentNodeId, request.Reason);
         return NoContent();
     }
@@ -199,11 +216,12 @@ public class DeliveriesController : ControllerBase
         PipelineSnapshot = d.PipelineSnapshot,
         Status = d.Status,
         WorkspaceType = d.WorkspaceType,
+        StoreFullContext = d.StoreFullContext,
         RepoUrl = d.RepoUrl,
         CurrentNodeId = d.CurrentNodeId,
         WorkspacePath = d.WorkspacePath,
         Branch = d.Branch,
-        Steps = d.Steps,
+        Steps = d.Steps.Select(ToStepSummary).ToList(),
         Inputs = d.Inputs,
         RetriedFromDeliveryId = d.RetriedFromDeliveryId,
         AttemptNumber = d.AttemptNumber,
@@ -216,4 +234,67 @@ public class DeliveriesController : ControllerBase
         StartedAt = d.StartedAt,
         CompletedAt = d.CompletedAt
     };
+
+    // Omits ContextSnapshot and Output.Result — the two fields that can be
+    // arbitrarily large. Fetched lazily via GetStepContext/GetStepOutput below.
+    private static DeliveryStepSummaryDto ToStepSummary(DeliveryStep s) => new()
+    {
+        NodeId = s.NodeId,
+        BlockId = s.BlockId,
+        BlockName = s.BlockName,
+        Status = s.Status,
+        IsContextTruncated = s.IsContextTruncated,
+        ContextFileRef = s.ContextFileRef,
+        ContextAvailability = s.ContextAvailability,
+        OutputAvailability = s.OutputAvailability,
+        Output = s.Output == null ? null : new AgentOutputSummaryDto
+        {
+            Status = s.Output.Status,
+            Confidence = s.Output.Confidence,
+            Summary = s.Output.Summary,
+            HumanGateReason = s.Output.HumanGateReason,
+            ErrorMessage = s.Output.ErrorMessage,
+            ErrorCode = s.Output.ErrorCode,
+            Recoverable = s.Output.Recoverable,
+            ApprovedBy = s.Output.ApprovedBy,
+            ApprovedAt = s.Output.ApprovedAt,
+            RejectedBy = s.Output.RejectedBy,
+            RejectedAt = s.Output.RejectedAt,
+            ReviewComment = s.Output.ReviewComment,
+            IsTruncated = s.Output.IsTruncated,
+            OutputFileRef = s.Output.OutputFileRef
+        },
+        StartedAt = s.StartedAt,
+        CompletedAt = s.CompletedAt
+    };
+
+    [HttpGet("{deliveryId}/steps/{stepId}/context")]
+    public async Task<IActionResult> GetStepContext(string deliveryId, string stepId)
+    {
+        var delivery = await _deliveries.GetByIdAsync(deliveryId, UserId());
+        if (delivery == null) return NotFound();
+
+        var step = delivery.Steps.FirstOrDefault(s => s.NodeId == stepId);
+        if (step == null) return NotFound();
+
+        if (step.IsContextTruncated)
+            return Ok(new { truncated = true, fileRef = step.ContextFileRef });
+
+        return Ok(step.ContextSnapshot ?? new BsonDocument());
+    }
+
+    [HttpGet("{deliveryId}/steps/{stepId}/output")]
+    public async Task<IActionResult> GetStepOutput(string deliveryId, string stepId)
+    {
+        var delivery = await _deliveries.GetByIdAsync(deliveryId, UserId());
+        if (delivery == null) return NotFound();
+
+        var step = delivery.Steps.FirstOrDefault(s => s.NodeId == stepId);
+        if (step == null || step.Output == null) return NotFound();
+
+        if (step.Output.IsTruncated)
+            return Ok(new { truncated = true, fileRef = step.Output.OutputFileRef });
+
+        return Ok(step.Output.Result);
+    }
 }

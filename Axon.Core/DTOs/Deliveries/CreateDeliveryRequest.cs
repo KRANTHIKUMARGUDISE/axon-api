@@ -10,6 +10,7 @@ public class CreateDeliveryRequest
     public string PipelineId { get; set; } = default!;
     public string RepoUrl { get; set; } = default!;
     public WorkspaceType WorkspaceType { get; set; }
+    public bool StoreFullContext { get; set; } = false;
     public BsonDocument? Inputs { get; set; }
     public string? RetriedFromDeliveryId { get; set; }
 }

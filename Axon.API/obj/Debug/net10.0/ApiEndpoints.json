@@ -196,6 +196,48 @@
   },
   {
     "ContainingType": "Axon.API.Controllers.DeliveriesController",
+    "Method": "GetStepContext",
+    "RelativePath": "api/deliveries/{deliveryId}/steps/{stepId}/context",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "deliveryId",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "stepId",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Axon.API.Controllers.DeliveriesController",
+    "Method": "GetStepOutput",
+    "RelativePath": "api/deliveries/{deliveryId}/steps/{stepId}/output",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "deliveryId",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "stepId",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Axon.API.Controllers.DeliveriesController",
     "Method": "GetById",
     "RelativePath": "api/deliveries/{id}",
     "HttpMethod": "GET",

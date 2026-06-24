@@ -12,6 +12,7 @@ public class Delivery
     public PipelineDefinition PipelineSnapshot { get; set; } = default!;
     public DeliveryStatus Status { get; set; }
     public WorkspaceType WorkspaceType { get; set; }
+    public bool StoreFullContext { get; set; } = false;
     public string RepoUrl { get; set; } = default!;
     public string? CurrentNodeId { get; set; }
     public string? WorkspacePath { get; set; }

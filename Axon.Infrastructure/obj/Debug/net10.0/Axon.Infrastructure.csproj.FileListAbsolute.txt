@@ -13,3 +13,4 @@ D:\AXON\axon-api\Axon.Infrastructure\obj\Debug\net10.0\Axon.Infrastructure.dll
 D:\AXON\axon-api\Axon.Infrastructure\obj\Debug\net10.0\refint\Axon.Infrastructure.dll
 D:\AXON\axon-api\Axon.Infrastructure\obj\Debug\net10.0\Axon.Infrastructure.pdb
 D:\AXON\axon-api\Axon.Infrastructure\obj\Debug\net10.0\ref\Axon.Infrastructure.dll
+D:\AXON\axon-api\Axon.Infrastructure\obj\Debug\net10.0\Axon.Infrastructure.sourcelink.json

@@ -82,6 +82,7 @@ public class BlocksController : ControllerBase
             EntryPointPath = request.EntryPointPath,
             ContextRequirements = request.ContextRequirements,
             OutputSchema = request.OutputSchema,
+            OutputMapping = request.OutputMapping,
             Tags = request.Tags,
             SyncStatus = SyncStatus.Local,
             IsActive = true,
@@ -113,6 +114,7 @@ public class BlocksController : ControllerBase
         if (request.ArtifactFormat.HasValue) block.ArtifactFormat = request.ArtifactFormat.Value;
         if (request.ContextRequirements != null) block.ContextRequirements = request.ContextRequirements;
         if (request.OutputSchema != null) block.OutputSchema = request.OutputSchema;
+        if (request.OutputMapping != null) block.OutputMapping = request.OutputMapping;
         if (request.Tags != null) block.Tags = request.Tags;
         if (request.CachedFiles != null)
             block.CachedFiles = request.CachedFiles.Select(f => new CachedFile
@@ -205,6 +207,8 @@ public class BlocksController : ControllerBase
         ArtifactName = b.ArtifactName,
         AgentRuntime = b.AgentRuntime,
         ArtifactFormat = b.ArtifactFormat,
+        ContextRequirements = b.ContextRequirements,
+        OutputSchema = b.OutputSchema,
         Tags = b.Tags,
         RunCount = b.RunCount,
         IsActive = b.IsActive,
@@ -220,6 +224,7 @@ public class BlocksController : ControllerBase
         Role = b.Role,
         ContextRequirements = b.ContextRequirements,
         OutputSchema = b.OutputSchema,
+        OutputMapping = b.OutputMapping,
         Tags = b.Tags,
         RunCount = b.RunCount,
         CreatedBy = b.CreatedBy,

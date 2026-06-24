@@ -10,6 +10,7 @@ public class BuildingBlock
     public BlockRole Role { get; set; }
     public List<string> ContextRequirements { get; set; } = [];
     public List<string> OutputSchema { get; set; } = [];
+    public Dictionary<string, string>? OutputMapping { get; set; }
     public List<string> Tags { get; set; } = [];
     public int RunCount { get; set; }
     public string CreatedBy { get; set; } = default!;
