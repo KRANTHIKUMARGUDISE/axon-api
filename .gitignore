@@ -1,2 +1,7 @@
 .vs/ 
 .claude/settings.local.json 
+
+
+# Ignore bin and obj folder in any subdirectory
+[Bb]ni/
+[Oo]bj/
