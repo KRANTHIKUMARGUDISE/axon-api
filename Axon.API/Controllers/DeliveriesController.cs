@@ -116,6 +116,26 @@ public class DeliveriesController : ControllerBase
     // sending (see executor.ts), but reject anything that slipped through over this hard cap.
     private const long MaxStepPayloadBytes = 500_000;
 
+    [HttpPost("{id}/steps/start")]
+    public async Task<IActionResult> StartStep(string id, [FromBody] StartStepRequest request)
+    {
+        var delivery = await _deliveries.GetByIdAsync(id, UserId());
+        if (delivery == null) return NotFound();
+
+        var step = new DeliveryStep
+        {
+            NodeId = request.NodeId,
+            BlockId = request.BlockId,
+            BlockName = request.BlockName,
+            Status = StepStatus.Running,
+            StartedAt = DateTime.UtcNow,
+            CompletedAt = null
+        };
+
+        await _deliveries.AppendStepAsync(id, step);
+        return NoContent();
+    }
+
     [HttpPost("{id}/steps")]
     public async Task<IActionResult> AppendStep(string id, [FromBody] AppendStepRequest request)
     {
@@ -127,12 +147,14 @@ public class DeliveriesController : ControllerBase
         var delivery = await _deliveries.GetByIdAsync(id, UserId());
         if (delivery == null) return NotFound();
 
-        // Desktop posts a step's full result in one shot after the agent has already
-        // run (no separate start-then-finish signal reaches the backend), so
-        // StartedAt/CompletedAt are both stamped at append time — except for a gate
-        // step (AwaitingApproval), which isn't actually finished yet; that one gets
-        // CompletedAt later, in UpdateGateStatusAsync, when it's approved/rejected.
         var now = DateTime.UtcNow;
+        // A POST /steps/start for this node normally landed first (see above) — when it
+        // did, finalize that SAME entry in place (preserving its real StartedAt) instead
+        // of appending a second one. Falls back to appending fresh, stamping
+        // StartedAt=now, only if no start call was made for this node (keeps this
+        // endpoint safe to call standalone — shouldn't normally happen in practice).
+        var existing = delivery.Steps.FirstOrDefault(s => s.NodeId == request.NodeId);
+
         var step = new DeliveryStep
         {
             NodeId = request.NodeId,
@@ -145,11 +167,15 @@ public class DeliveriesController : ControllerBase
             ContextAvailability = request.ContextAvailability,
             OutputAvailability = request.OutputAvailability,
             Output = request.Output,
-            StartedAt = now,
+            StartedAt = existing?.StartedAt ?? now,
             CompletedAt = request.Status == StepStatus.AwaitingApproval ? null : now
         };
 
-        await _deliveries.AppendStepAsync(id, step);
+        if (existing != null)
+            await _deliveries.UpdateStepAsync(id, request.NodeId, step);
+        else
+            await _deliveries.AppendStepAsync(id, step);
+
         return NoContent();
     }
 
@@ -264,6 +290,7 @@ public class DeliveriesController : ControllerBase
             IsTruncated = s.Output.IsTruncated,
             ToolsUsed = s.Output.ToolsUsed,
             ToolsDenied = s.Output.ToolsDenied,
+            TimedOut = s.Output.TimedOut,
             OutputFileRef = s.Output.OutputFileRef
         },
         StartedAt = s.StartedAt,

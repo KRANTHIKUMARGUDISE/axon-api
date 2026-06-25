@@ -40,4 +40,5 @@ public class AgentOutputSummaryDto
     public string? OutputFileRef { get; set; }
     public List<string>? ToolsUsed { get; set; }
     public List<string>? ToolsDenied { get; set; }
+    public bool? TimedOut { get; set; }
 }

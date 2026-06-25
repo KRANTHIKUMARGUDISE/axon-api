@@ -28,4 +28,9 @@ public class AgentOutput
     // Distinct tool names attempted but blocked by the PreToolUse hook. Kept separate
     // from ToolsUsed — GetToolsUsedForBlockAsync must never aggregate from this field.
     public List<string>? ToolsDenied { get; set; }
+    // Set when a Failed status is specifically caused by the block's configured
+    // timeoutSeconds elapsing — distinguishes "ran out of time" from other failures
+    // (parse errors, denied tools cascading into a bad finish, real exceptions) so the UI
+    // can call it out explicitly instead of relying on matching errorMessage text.
+    public bool? TimedOut { get; set; }
 }
