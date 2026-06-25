@@ -9,4 +9,5 @@ public class BlockFilter
     public bool? IsActive { get; set; }
     public List<string>? Tags { get; set; }
     public string? Search { get; set; }
+    public BuildingBlockVisibility? Visibility { get; set; }
 }

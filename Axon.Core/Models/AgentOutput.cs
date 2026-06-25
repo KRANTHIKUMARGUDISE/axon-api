@@ -22,4 +22,10 @@ public class AgentOutput
     public string? ReviewComment { get; set; }
     public bool IsTruncated { get; set; }
     public string? OutputFileRef { get; set; }
+    // Part 3 — distinct tool names actually permitted and invoked during an Agentic run
+    // (observed via the executor's PreToolUse hook). Null/empty for Prompt-mode blocks.
+    public List<string>? ToolsUsed { get; set; }
+    // Distinct tool names attempted but blocked by the PreToolUse hook. Kept separate
+    // from ToolsUsed — GetToolsUsedForBlockAsync must never aggregate from this field.
+    public List<string>? ToolsDenied { get; set; }
 }

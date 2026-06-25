@@ -262,6 +262,8 @@ public class DeliveriesController : ControllerBase
             RejectedAt = s.Output.RejectedAt,
             ReviewComment = s.Output.ReviewComment,
             IsTruncated = s.Output.IsTruncated,
+            ToolsUsed = s.Output.ToolsUsed,
+            ToolsDenied = s.Output.ToolsDenied,
             OutputFileRef = s.Output.OutputFileRef
         },
         StartedAt = s.StartedAt,

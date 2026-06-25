@@ -16,4 +16,10 @@ public class UpdateBlockRequest
     public List<string>? Tags { get; set; }
     public List<CachedFileRequest>? CachedFiles { get; set; }
     public string? EntryPointPath { get; set; }
+    public BuildingBlockVisibility? Visibility { get; set; }
+    public ExecutionType? ExecutionType { get; set; }
+    public List<string>? AllowedTools { get; set; }
+    public int? DefaultTimeoutSeconds { get; set; }
+    /// <summary>Client signals agreement confirmation; server stamps the actual timestamp and acceptor identity.</summary>
+    public bool? ExecutionAgreementAccepted { get; set; }
 }

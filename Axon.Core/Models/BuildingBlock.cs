@@ -27,6 +27,12 @@ public class BuildingBlock
     public string? MarketplaceVersion { get; set; }
     public SyncStatus SyncStatus { get; set; }
     public bool IsActive { get; set; }
+    public BuildingBlockVisibility? Visibility { get; set; }
+    public ExecutionType? ExecutionType { get; set; }
+    public List<string>? AllowedTools { get; set; }
+    public int DefaultTimeoutSeconds { get; set; } = 120;
+    public DateTime? ExecutionAgreementAcceptedAt { get; set; }
+    public string? ExecutionAgreementAcceptedBy { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 }

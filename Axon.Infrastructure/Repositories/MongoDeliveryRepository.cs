@@ -135,6 +135,25 @@ public class MongoDeliveryRepository : IDeliveryRepository
         }
     }
 
+    public async Task<(List<string> Tools, int RunCount)> GetToolsUsedForBlockAsync(string blockId)
+    {
+        var filter = Builders<Delivery>.Filter.ElemMatch(d => d.Steps, s => s.BlockId == blockId);
+        var deliveries = await _context.Deliveries.Find(filter).ToListAsync();
+
+        var toolSet = new HashSet<string>();
+        var runCount = 0;
+        foreach (var delivery in deliveries)
+        {
+            foreach (var step in delivery.Steps.Where(s => s.BlockId == blockId && s.Output?.ToolsUsed is { Count: > 0 }))
+            {
+                runCount++;
+                foreach (var tool in step.Output!.ToolsUsed!) toolSet.Add(tool);
+            }
+        }
+
+        return (toolSet.OrderBy(t => t).ToList(), runCount);
+    }
+
     public async Task<int> GetNextJobNumberAsync()
     {
         var counters = _context.GetRawCollection<BsonDocument>("counters");

@@ -16,4 +16,8 @@ public interface IDeliveryRepository
     // Atomically-incrementing, globally unique job number (1, 2, 3...) — used in
     // branch naming (axon/job-{n}-{ticketId}) so jobs are easy to reference/sort.
     Task<int> GetNextJobNumberAsync();
+    // Part 4 task 5 — distinct union of AgentOutput.ToolsUsed across every step that ran
+    // this block, plus how many of those steps actually recorded tool usage (i.e. ran
+    // Agentic). Used to suggest a restricted allowedTools list after exploration-mode runs.
+    Task<(List<string> Tools, int RunCount)> GetToolsUsedForBlockAsync(string blockId);
 }

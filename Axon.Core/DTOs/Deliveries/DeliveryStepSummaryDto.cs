@@ -38,4 +38,6 @@ public class AgentOutputSummaryDto
     public string? ReviewComment { get; set; }
     public bool IsTruncated { get; set; }
     public string? OutputFileRef { get; set; }
+    public List<string>? ToolsUsed { get; set; }
+    public List<string>? ToolsDenied { get; set; }
 }

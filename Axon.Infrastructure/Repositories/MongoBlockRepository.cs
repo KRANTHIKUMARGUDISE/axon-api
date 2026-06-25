@@ -14,10 +14,15 @@ public class MongoBlockRepository : IBlockRepository
 
     public MongoBlockRepository(MongoContext context) => _context = context;
 
-    public async Task<List<BuildingBlock>> GetAllAsync(BlockFilter filter)
+    public async Task<List<BuildingBlock>> GetAllAsync(BlockFilter filter, string? userId)
     {
         var builder = Builders<BuildingBlock>.Filter;
         var f = builder.Empty;
+
+        f &= builder.Or(
+            builder.Ne(b => b.Visibility, BuildingBlockVisibility.Personal),
+            builder.Eq(b => b.CreatedBy, userId)
+        );
 
         if (filter.Role.HasValue)
             f &= builder.Eq(b => b.Role, filter.Role.Value);
@@ -25,6 +30,8 @@ public class MongoBlockRepository : IBlockRepository
             f &= builder.Eq(b => b.SyncStatus, filter.SyncStatus.Value);
         if (filter.IsActive.HasValue)
             f &= builder.Eq(b => b.IsActive, filter.IsActive.Value);
+        if (filter.Visibility.HasValue)
+            f &= builder.Eq(b => b.Visibility, filter.Visibility.Value);
         if (filter.Tags?.Count > 0)
             f &= builder.AnyIn(b => b.Tags, filter.Tags);
         if (!string.IsNullOrWhiteSpace(filter.Search))

@@ -19,4 +19,7 @@ public class BlockSummaryDto
     public bool IsActive { get; set; }
     public string CreatedBy { get; set; } = default!;
     public string CreatedByName { get; set; } = default!;
+    public BuildingBlockVisibility? Visibility { get; set; }
+    public ExecutionType? ExecutionType { get; set; }
+    public int DefaultTimeoutSeconds { get; set; }
 }

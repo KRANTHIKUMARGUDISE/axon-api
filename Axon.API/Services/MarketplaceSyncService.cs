@@ -38,7 +38,7 @@ public class MarketplaceSyncService : BackgroundService
         var blocks = scope.ServiceProvider.GetRequiredService<IBlockRepository>();
         var marketplace = scope.ServiceProvider.GetRequiredService<IMarketplaceService>();
 
-        var syncedBlocks = await blocks.GetAllAsync(new BlockFilter { SyncStatus = SyncStatus.Synced, IsActive = true });
+        var syncedBlocks = await blocks.GetAllAsync(new BlockFilter { SyncStatus = SyncStatus.Synced, IsActive = true }, userId: null);
 
         foreach (var block in syncedBlocks)
         {

@@ -19,9 +19,15 @@ public class MongoPipelineRepository : IPipelineRepository
 
     public async Task<List<PipelineDefinition>> GetAllAsync(PipelineVisibility? visibility, string? userId)
     {
+        var builder = Builders<PipelineDefinition>.Filter;
         var filter = visibility.HasValue
-            ? Builders<PipelineDefinition>.Filter.Eq(p => p.Visibility, visibility.Value)
-            : Builders<PipelineDefinition>.Filter.Empty;
+            ? builder.Eq(p => p.Visibility, visibility.Value)
+            : builder.Empty;
+
+        filter &= builder.Or(
+            builder.Ne(p => p.Visibility, PipelineVisibility.Personal),
+            builder.Eq(p => p.CreatedBy, userId)
+        );
 
         return await _context.Pipelines.Find(filter).ToListAsync();
     }

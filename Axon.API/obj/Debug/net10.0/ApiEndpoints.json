@@ -73,6 +73,11 @@
         "Name": "tags",
         "Type": "System.Collections.Generic.List\u00601[[System.String, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "IsRequired": false
+      },
+      {
+        "Name": "visibility",
+        "Type": "System.Nullable\u00601[[Axon.Core.Enums.BuildingBlockVisibility, Axon.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "IsRequired": false
       }
     ],
     "ReturnTypes": []
@@ -151,6 +156,22 @@
     "Method": "Sync",
     "RelativePath": "api/blocks/{id}/sync",
     "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Axon.API.Controllers.BlocksController",
+    "Method": "GetToolsUsed",
+    "RelativePath": "api/blocks/{id}/tools-used",
+    "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [
